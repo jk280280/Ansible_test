@@ -1,0 +1,22 @@
+---
+- name: Rollback Apache Web Server
+  hosts: web_servers
+  become: yes
+  vars_files:
+    - ../vars/apache_version.yml
+  tasks:
+    - name: Revert to Previous Apache Version
+      yum:
+        name: "httpd-{{ previous_version }}"
+        state: present
+
+    - name: Restart Apache Service
+      service:
+        name: httpd
+        state: restarted
+
+    - name: Log Rollback Action
+      lineinfile:
+        path: ../logs/rollback.log
+        line: "Rollback performed on {{ ansible_date_time.date }} due to deployment failure"
+        create: yes
