@@ -1,0 +1,13 @@
+---
+- name: Copy file to remote server
+  hosts: all
+  become: true  # Run as sudo
+  tasks:
+    - name: Copy file to destination
+      ansible.builtin.copy:
+        src: /ansible/DockerFile  # Local file on Ansible control node
+        dest: /home/srihoney939/haritha  # Destination on remote server
+        owner: user  # Set file owner (optional)
+        group: user  # Set file group (optional)
+        mode: '0644'  # Set file permissions
+
