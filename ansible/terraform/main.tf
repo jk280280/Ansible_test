@@ -1,38 +1,34 @@
-resource "google_compute_instance" "vm_instance" {
-  name         = var.vm_name
-  machine_type = var.machine_type
-  zone         = var.zone
+provider "google" {
+  project     = "harness-project-450807"
+  region      = "us-central1"
+}
+
+resource "google_compute_instance" "harness_delegate" {
+  name         = "harness-delegate-vm"
+  machine_type = "e2-medium"
+  zone         = "us-central1-a"
 
   boot_disk {
     initialize_params {
-      image = var.image
+      image = "ubuntu-2004-focal-v20231010"
     }
   }
 
   network_interface {
     network = "default"
-    access_config {
-      # Assigns a public IP
-    }
+    access_config {}  # Enable public IP
   }
 
-  tags = ["web"]
-
-  metadata_startup_script = <<-EOT
+  metadata_startup_script = <<-EOF
     #!/bin/bash
-    sudo apt update -y
-    
-    # Install Apache
-    sudo apt install -y apache2
-    sudo systemctl start apache2
-    sudo systemctl enable apache2
-    
-    # Install Ansible
-    sudo apt install -y software-properties-common
-    sudo add-apt-repository --yes --update ppa:ansible/ansible
-    sudo apt install -y ansible
-    
-    # Verify Installation
-    ansible --version
-  EOT
+    apt-get update -y
+    apt-get install -y docker.io
+    systemctl start docker
+    systemctl enable docker
+    docker run -d --name harness-delegate \
+      -e ACCOUNT_ID=ucHySz2jQKKWQweZdXyCog \
+      -e DELEGATE_TOKEN=NzY5NTY3ZjJkYTczNWNjZDJjMmIwN2Y4MTA4NTJkNzM= \
+      -e MANAGER_HOST_AND_PORT=https://app.harness.io \
+      harithahari2420/custom-harness-delegate
+  EOF
 }

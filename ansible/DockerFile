@@ -1,17 +1,15 @@
-FROM harness/delegate:latest  # Use Harness official delegate image
+FROM harness/delegate:latest  # Use official Harness delegate image
 
-# Install required dependencies
-RUN apt-get update && apt-get install -y \
-    ansible \
-    sshpass \
-    python3-pip && \
+# Install Ansible
+RUN apt-get update && apt-get install -y ansible sshpass python3-pip && \
     pip3 install --upgrade pip
 
-# Verify Ansible installation
+# Verify installation
 RUN ansible --version
 
 # Set working directory
 WORKDIR /opt/harness-delegate
 
-# Run delegate
+# Start the delegate
 ENTRYPOINT ["/entrypoint.sh"]
+
