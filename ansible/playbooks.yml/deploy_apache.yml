@@ -2,8 +2,7 @@
 - name: Deploy Apache Web Server
   hosts: web_servers
   become: yes
-  vars_files:
-    - ../vars/apache_version.yml
+  
   tasks:
     - name: Install Apache
       yum:
