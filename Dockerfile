@@ -1,4 +1,4 @@
-FROM harness/delegate:latest  # Use official Harness delegate image
+FROM harness/delegate:latest
 
 # Install Ansible
 RUN apt-get update && apt-get install -y ansible sshpass python3-pip && \
