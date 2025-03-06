@@ -7,7 +7,7 @@ ENV TZ=UTC
 
 # Install required tools
 RUN apt update && \
-    apt install -y ansible python3-pip awscli tzdata && \
+    apt install -y ansible python3-pip awscli git tzdata && \
     pip3 install boto3 && \
     rm -rf /var/lib/apt/lists/*
 
