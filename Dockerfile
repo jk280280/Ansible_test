@@ -11,4 +11,7 @@ RUN ansible --version && git --version
 WORKDIR /opt/harness-delegate
 
 # Start the delegate
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
+
