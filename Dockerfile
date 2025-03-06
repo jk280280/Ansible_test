@@ -1,17 +1,27 @@
-FROM harness/delegate:latest
+# Use Harness Delegate as the base image
+FROM harness/delegate:latest  
 
-# Install Ansible
-RUN apt-get update && apt-get install -y ansible sshpass python3-pip git && \
-    pip3 install --upgrade pip
+# Set timezone environment variables to prevent tzdata from prompting
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
 
-# Verify installation
-RUN ansible --version && git --version
+# Install required tools
+RUN apt update && \
+    apt install -y ansible python3-pip awscli tzdata && \
+    pip3 install boto3 && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set working directory
-WORKDIR /opt/harness-delegate
+WORKDIR /harness
 
-# Start the delegate
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+# Copy Playbooks, Dynamic Inventory Script, and Start Scripts
+COPY playbooks /etc/ansible/playbooks
+COPY dynamic_inventory.py /harness/dynamic_inventory.py
+COPY start.sh /harness/start.sh
+COPY rollback.sh /harness/rollback.sh
 
+# Provide execution permissions
+RUN chmod +x /harness/start.sh /harness/rollback.sh /harness/dynamic_inventory.py
+
+# Default command to start the delegate
+CMD ["./start.sh"]
